@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel & Co. — Design Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #0a0806;
+  --white: #fdfaf5;
+  --warm: #f5f0e6;
+  --mid: #e8e0d0;
+  --accent: #c84b2f;
+  --accent2: #2563eb;
+  --gold: #d4a017;
+  --text: #1a1612;
+  --muted: #6b6259;
+  --border: #ddd5c5;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { scroll-behavior:smooth; }
+body { background:var(--white); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
+
+/* SCREENS */
+.screen { display:none; min-height:100vh; }
+.screen.active { display:block; }
+
+/* NAV */
+nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(253,250,245,0.95); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 24px;
+}
+.logo { font-family:'Fraunces',serif; font-size:1.3rem; font-weight:900; letter-spacing:-0.02em; cursor:pointer; }
+.logo em { color:var(--accent); font-style:italic; }
+.nav-btn {
+  background:var(--accent); color:#fff; border:none;
+  padding:10px 20px; font-family:'Inter',sans-serif; font-weight:600;
+  font-size:0.78rem; cursor:pointer; border-radius:2px;
+  letter-spacing:0.04em; text-transform:uppercase;
+}
+
+/* HERO */
+.hero {
+  padding:60px 24px 48px;
+  background:var(--black); color:var(--white);
+  text-align:center; position:relative; overflow:hidden;
+}
+.hero::before {
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%, rgba(200,75,47,0.25) 0%, transparent 65%);
+}
+.hero-tag {
+  display:inline-block; font-size:0.65rem; letter-spacing:0.2em;
+  text-transform:uppercase; color:var(--accent); margin-bottom:20px;
+  font-weight:600; position:relative;
+}
+.hero h1 {
+  font-family:'Fraunces',serif; font-size:clamp(2.4rem,8vw,4rem);
+  font-weight:900; line-height:1.0; letter-spacing:-0.03em;
+  margin-bottom:16px; position:relative;
+}
+.hero h1 em { font-style:italic; color:var(--accent); }
+.hero-sub {
+  font-size:0.92rem; color:rgba(253,250,245,0.55);
+  max-width:340px; margin:0 auto 32px; line-height:1.7; position:relative;
+}
+.hero-cta {
+  background:var(--accent); color:#fff; border:none;
+  padding:16px 36px; font-family:'Inter',sans-serif; font-weight:700;
+  font-size:0.88rem; cursor:pointer; border-radius:2px;
+  letter-spacing:0.06em; text-transform:uppercase;
+  position:relative; width:100%; max-width:300px;
+  transition:background 0.2s;
+}
+.hero-cta:hover { background:#a83825; }
+.hero-pills {
+  display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
+  margin-top:32px; position:relative;
+}
+.pill {
+  background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px; padding:6px 14px; font-size:0.7rem;
+  color:rgba(253,250,245,0.6);
+}
+
+/* SERVICES */
+.services-wrap { padding:48px 24px; }
+.sec-label {
+  font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--accent); font-weight:600; margin-bottom:10px;
+}
+.sec-title {
+  font-family:'Fraunces',serif; font-size:1.8rem; font-weight:900;
+  letter-spacing:-0.02em; margin-bottom:6px; line-height:1.1;
+}
+.sec-sub { font-size:0.82rem; color:var(--muted); line-height:1.6; margin-bottom:32px; }
+
+.service-card {
+  background:var(--warm); border:1px solid var(--border);
+  margin-bottom:16px; padding:28px 24px; cursor:pointer;
+  transition:all 0.2s; position:relative; overflow:hidden;
+}
+.service-card::after {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:3px; background:var(--accent); transform:scaleY(0);
+  transform-origin:bottom; transition:transform 0.25s;
+}
+.service-card:hover::after, .service-card.selected::after { transform:scaleY(1); }
+.service-card.selected { background:#fff; border-color:var(--accent); }
+
+.svc-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:10px; }
+.svc-name { font-family:'Fraunces',serif; font-size:1.1rem; font-weight:700; }
+.svc-price { font-family:'Fraunces',serif; font-size:1.3rem; font-weight:900; color:var(--accent); white-space:nowrap; }
+.svc-desc { font-size:0.78rem; color:var(--muted); line-height:1.65; margin-bottom:14px; }
+.svc-includes { display:flex; flex-wrap:wrap; gap:6px; }
+.svc-tag {
+  font-size:0.65rem; padding:4px 10px; background:var(--mid);
+  border-radius:2px; color:var(--muted); font-weight:500;
+}
+.select-badge {
+  display:none; position:absolute; top:12px; right:12px;
+  background:var(--accent); color:#fff; font-size:0.6rem;
+  font-weight:700; padding:3px 8px; letter-spacing:0.08em;
+  text-transform:uppercase; border-radius:2px;
+}
+.service-card.selected .select-badge { display:block; }
+
+/* ORDER FORM */
+.order-wrap { padding:48px 24px; }
+.order-card {
+  background:var(--warm); border:1px solid var(--border); padding:32px 24px;
+}
+.order-title { font-family:'Fraunces',serif; font-size:1.5rem; font-weight:900; margin-bottom:6px; }
+.order-sub { font-size:0.78rem; color:var(--muted); margin-bottom:28px; line-height:1.6; }
+
+.f-group { margin-bottom:20px; }
+.f-label {
+  display:block; font-size:0.62rem; letter-spacing:0.14em;
+  color:var(--muted); text-transform:uppercase; margin-bottom:7px; font-weight:600;
+}
+.f-input, .f-select, .f-textarea {
+  width:100%; background:#fff; border:1px solid var(--border);
+  color:var(--text); font-family:'Inter',sans-serif; font-size:0.88rem;
+  padding:13px 14px; outline:none; border-radius:2px;
+  transition:border-color 0.2s; resize:vertical;
+}
+.f-input:focus, .f-select:focus, .f-textarea:focus { border-color:var(--accent); }
+.f-select option { background:#fff; }
+
+.color-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+.color-chip {
+  width:36px; height:36px; border-radius:50%; cursor:pointer;
+  border:3px solid transparent; transition:all 0.15s; position:relative;
+}
+.color-chip.on { border-color:var(--black); transform:scale(1.15); }
+
+.style-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+.style-chip {
+  padding:8px 14px; border:1px solid var(--border); border-radius:2px;
+  font-size:0.74rem; cursor:pointer; transition:all 0.15s;
+  background:#fff; color:var(--muted); font-weight:500;
+}
+.style-chip.on { background:var(--black); color:#fff; border-color:var(--black); }
+
+/* ORDER SUMMARY */
+.order-summary {
+  background:#fff; border:1px solid var(--border);
+  padding:20px; margin-bottom:24px;
+}
+.summary-row {
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:0.82rem; padding:8px 0; border-bottom:1px solid var(--border);
+}
+.summary-row:last-child { border-bottom:none; font-weight:700; font-size:0.92rem; }
+.summary-label { color:var(--muted); }
+.summary-val { font-weight:600; }
+.summary-total { color:var(--accent); font-size:1.1rem !important; }
+
+/* PAYPAL BTN */
+.paypal-section { margin-top:8px; }
+.paypal-note {
+  font-size:0.72rem; color:var(--muted); text-align:center;
+  margin-bottom:16px; line-height:1.6;
+}
+.paypal-btn {
+  width:100%; padding:16px; background:#0070ba; color:#fff;
+  border:none; font-family:'Inter',sans-serif; font-weight:700;
+  font-size:0.92rem; cursor:pointer; border-radius:4px;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  transition:background 0.2s; letter-spacing:0.02em;
+}
+.paypal-btn:hover { background:#005ea6; }
+.paypal-btn:disabled { opacity:0.5; cursor:not-allowed; }
+.paypal-logo { font-size:1.1rem; font-weight:900; font-style:italic; }
+
+.divider-text {
+  text-align:center; font-size:0.68rem; color:var(--muted);
+  margin:16px 0; display:flex; align-items:center; gap:10px;
+}
+.divider-text::before,.divider-text::after { content:''; flex:1; height:1px; background:var(--border); }
+
+.submit-btn {
+  width:100%; padding:16px; background:var(--accent); color:#fff;
+  border:none; font-family:'Inter',sans-serif; font-weight:700;
+  font-size:0.88rem; cursor:pointer; border-radius:2px;
+  letter-spacing:0.05em; text-transform:uppercase;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  transition:background 0.2s;
+}
+.submit-btn:hover { background:#a83825; }
+.submit-btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+.spin { width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.6s linear infinite; display:none; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* CONFIRMATION */
+.confirm-wrap { padding:48px 24px; text-align:center; }
+.confirm-icon {
+  width:80px; height:80px; border-radius:50%;
+  background:rgba(200,75,47,0.1); border:2px solid var(--accent);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem; margin:0 auto 24px;
+}
+.confirm-title { font-family:'Fraunces',serif; font-size:2rem; font-weight:900; margin-bottom:12px; }
+.confirm-sub { font-size:0.88rem; color:var(--muted); line-height:1.7; max-width:300px; margin:0 auto 32px; }
+.confirm-box {
+  background:var(--warm); border:1px solid var(--border);
+  padding:24px; text-align:left; margin-bottom:24px;
+}
+.confirm-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:0.82rem; }
+.confirm-row:last-child { border-bottom:none; }
+.confirm-key { color:var(--muted); }
+.confirm-val { font-weight:600; }
+
+.next-steps { text-align:left; margin-bottom:32px; }
+.next-title { font-family:'Fraunces',serif; font-size:1rem; font-weight:700; margin-bottom:16px; }
+.next-item { display:flex; gap:12px; margin-bottom:14px; align-items:flex-start; }
+.next-num {
+  width:24px; height:24px; border-radius:50%; background:var(--accent);
+  color:#fff; font-size:0.65rem; font-weight:700; display:flex;
+  align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;
+}
+.next-text { font-size:0.8rem; color:var(--muted); line-height:1.6; }
+.next-text strong { color:var(--text); }
+
+.back-home {
+  width:100%; padding:14px; background:var(--black); color:#fff;
+  border:none; font-family:'Inter',sans-serif; font-weight:600;
+  font-size:0.85rem; cursor:pointer; border-radius:2px;
+  letter-spacing:0.04em; text-transform:uppercase;
+}
+
+/* OWNER PANEL */
+.owner-wrap { padding:48px 24px; }
+.owner-title { font-family:'Fraunces',serif; font-size:1.5rem; font-weight:900; margin-bottom:4px; }
+.owner-sub { font-size:0.78rem; color:var(--muted); margin-bottom:28px; }
+.stats-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:28px; }
+.stat-box { background:var(--warm); border:1px solid var(--border); padding:20px 16px; }
+.stat-num { font-family:'Fraunces',serif; font-size:2rem; font-weight:900; color:var(--accent); }
+.stat-label { font-size:0.65rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-top:3px; }
+
+.order-item { background:var(--warm); border:1px solid var(--border); padding:20px; margin-bottom:12px; }
+.order-item-top { display:flex; justify-content:space-between; margin-bottom:8px; }
+.order-item-name { font-weight:700; font-size:0.88rem; }
+.order-item-price { color:var(--accent); font-weight:700; font-family:'Fraunces',serif; }
+.order-item-detail { font-size:0.74rem; color:var(--muted); line-height:1.6; }
+.order-item-date { font-size:0.65rem; color:var(--muted); margin-top:8px; }
+.order-status {
+  display:inline-block; font-size:0.6rem; font-weight:700;
+  padding:3px 8px; border-radius:2px; letter-spacing:0.08em;
+  text-transform:uppercase; margin-top:8px;
+}
+.status-new { background:rgba(200,75,47,0.1); color:var(--accent); }
+.status-done { background:rgba(22,163,74,0.1); color:#16a34a; }
+
+.empty-orders { text-align:center; padding:48px 24px; color:var(--muted); font-size:0.82rem; }
+
+.owner-login { padding:48px 24px; }
+.owner-card { background:var(--warm); border:1px solid var(--border); padding:32px 24px; }
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position:fixed; bottom:0; left:0; right:0;
+  background:var(--white); border-top:1px solid var(--border);
+  display:flex; z-index:100; padding-bottom:env(safe-area-inset-bottom);
+}
+.bnav-item {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  padding:10px 8px; cursor:pointer; transition:color 0.15s; color:var(--muted);
+  font-size:0.58rem; letter-spacing:0.08em; text-transform:uppercase; gap:4px;
+  background:none; border:none; font-family:'Inter',sans-serif;
+}
+.bnav-item.active { color:var(--accent); }
+.bnav-icon { font-size:1.1rem; }
+
+body { padding-bottom:70px; }
+
+/* TOAST */
+#toast {
+  position:fixed; bottom:80px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--black); color:var(--white); padding:12px 20px;
+  border-radius:4px; font-size:0.78rem; font-weight:500;
+  opacity:0; transition:all 0.3s; pointer-events:none; z-index:999;
+  white-space:nowrap;
+}
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- ══════ SCREEN: HOME ══════ -->
+<div class="screen active" id="scr-home">
+  <nav>
+    <div class="logo" onclick="goScreen('home')">Pixel <em>&</em> Co.</div>
+    <button class="nav-btn" onclick="goScreen('order')">Order Now</button>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-tag">AI-Powered Design Studio</div>
+    <h1>Pro Design.<br><em>Fast & Affordable.</em></h1>
+    <p class="hero-sub">Logos, brand kits, and social graphics. Delivered in 48 hours. You don't pay until you love it.</p>
+    <button class="hero-cta" onclick="goScreen('services')">Browse Services →</button>
+    <div class="hero-pills">
+      <span class="pill">48hr Delivery</span>
+      <span class="pill">Unlimited Revisions</span>
+      <span class="pill">Pay After Approval</span>
+    </div>
+  </div>
+
+  <div style="padding:40px 24px;">
+    <div class="sec-label">Services</div>
+    <div class="sec-title">What We Create</div>
+    <div class="sec-sub">Pick a service below and place your order in 2 minutes.</div>
+
+    <div class="service-card" onclick="quickOrder('Brand Kit','149')">
+      <div class="svc-top">
+        <div class="svc-name">Brand Kit</div>
+        <div class="svc-price">$149</div>
+      </div>
+      <div class="svc-desc">Full logo suite, color palette, font guide, business card design, and brand guidelines PDF. Everything you need to look professional.</div>
+      <div class="svc-includes">
+        <span class="svc-tag">3 Logo Variations</span>
+        <span class="svc-tag">Color Palette</span>
+        <span class="svc-tag">Font Guide</span>
+        <span class="svc-tag">Business Card</span>
+        <span class="svc-tag">All Source Files</span>
+      </div>
+    </div>
+
+    <div class="service-card" onclick="quickOrder('Logo Design','79')">
+      <div class="svc-top">
+        <div class="svc-name">Logo Design</div>
+        <div class="svc-price">$79</div>
+      </div>
+      <div class="svc-desc">A professional logo in 3 concepts. Pick your favorite, request changes, get final files in PNG, SVG, and PDF formats.</div>
+      <div class="svc-includes">
+        <span class="svc-tag">3 Concepts</span>
+        <span class="svc-tag">Unlimited Revisions</span>
+        <span class="svc-tag">All File Formats</span>
+        <span class="svc-tag">48hr Delivery</span>
+      </div>
+    </div>
+
+    <div class="service-card" onclick="quickOrder('Social Media Pack','99')">
+      <div class="svc-top">
+        <div class="svc-name">Social Media Pack</div>
+        <div class="svc-price">$99<span style="font-size:0.8rem;color:var(--muted)">/mo</span></div>
+      </div>
+      <div class="svc-desc">30 branded post graphics plus 5 story templates. Ready to post on Instagram, Facebook, or LinkedIn.</div>
+      <div class="svc-includes">
+        <span class="svc-tag">30 Post Graphics</span>
+        <span class="svc-tag">5 Story Templates</span>
+        <span class="svc-tag">Canva Templates</span>
+        <span class="svc-tag">Content Calendar</span>
+      </div>
+    </div>
+
+    <div class="service-card" onclick="quickOrder('Starter Design','49')">
+      <div class="svc-top">
+        <div class="svc-name">Starter Design</div>
+        <div class="svc-price">$49</div>
+      </div>
+      <div class="svc-desc">One design piece — flyer, business card, banner, poster, or email header. Fast and affordable.</div>
+      <div class="svc-includes">
+        <span class="svc-tag">1 Design Piece</span>
+        <span class="svc-tag">2 Concepts</span>
+        <span class="svc-tag">Print Ready</span>
+        <span class="svc-tag">24hr Delivery</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SCREEN: SERVICES ══════ -->
+<div class="screen" id="scr-services">
+  <nav>
+    <div class="logo" onclick="goScreen('home')">Pixel <em>&</em> Co.</div>
+    <button class="nav-btn" onclick="proceedToOrder()">Order Selected</button>
+  </nav>
+  <div class="services-wrap">
+    <div class="sec-label">Choose a Service</div>
+    <div class="sec-title">What do you need?</div>
+    <div class="sec-sub">Tap a service to select it, then tap Order.</div>
+
+    <div class="service-card" id="svc-0" onclick="selectService(0,'Brand Kit','149')">
+      <div class="select-badge">Selected ✓</div>
+      <div class="svc-top"><div class="svc-name">Brand Kit</div><div class="svc-price">$149</div></div>
+      <div class="svc-desc">Logo, colors, fonts, business card, guidelines. Everything to look professional from day one.</div>
+      <div class="svc-includes"><span class="svc-tag">Most Popular</span><span class="svc-tag">72hr Delivery</span></div>
+    </div>
+    <div class="service-card" id="svc-1" onclick="selectService(1,'Logo Design','79')">
+      <div class="select-badge">Selected ✓</div>
+      <div class="svc-top"><div class="svc-name">Logo Design</div><div class="svc-price">$79</div></div>
+      <div class="svc-desc">3 logo concepts, unlimited revisions, all file formats included.</div>
+      <div class="svc-includes"><span class="svc-tag">48hr Delivery</span><span class="svc-tag">All Formats</span></div>
+    </div>
+    <div class="service-card" id="svc-2" onclick="selectService(2,'Social Media Pack','99')">
+      <div class="select-badge">Selected ✓</div>
+      <div class="svc-top"><div class="svc-name">Social Media Pack</div><div class="svc-price">$99/mo</div></div>
+      <div class="svc-desc">30 post graphics + 5 story templates every month. Editable Canva files included.</div>
+      <div class="svc-includes"><span class="svc-tag">Monthly</span><span class="svc-tag">Cancel Anytime</span></div>
+    </div>
+    <div class="service-card" id="svc-3" onclick="selectService(3,'Starter Design','49')">
+      <div class="select-badge">Selected ✓</div>
+      <div class="svc-top"><div class="svc-name">Starter Design</div><div class="svc-price">$49</div></div>
+      <div class="svc-desc">One design piece — flyer, business card, poster, banner, or email header.</div>
+      <div class="svc-includes"><span class="svc-tag">24hr Delivery</span><span class="svc-tag">Print Ready</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SCREEN: ORDER FORM ══════ -->
+<div class="screen" id="scr-order">
+  <nav>
+    <div class="logo" onclick="goScreen('home')">Pixel <em>&</em> Co.</div>
+    <div style="font-size:0.75rem;color:var(--muted)">Order Form</div>
+  </nav>
+  <div class="order-wrap">
+    <div class="order-card">
+      <div class="order-title">Place Your Order</div>
+      <div class="order-sub">Fill this out and we'll deliver your designs in 48 hours.</div>
+
+      <div class="f-group">
+        <label class="f-label">Your Name</label>
+        <input class="f-input" id="o-name" type="text" placeholder="Jane Smith" />
+      </div>
+      <div class="f-group">
+        <label class="f-label">Email Address</label>
+        <input class="f-input" id="o-email" type="email" placeholder="jane@example.com" />
+      </div>
+      <div class="f-group">
+        <label class="f-label">Business Name</label>
+        <input class="f-input" id="o-biz" type="text" placeholder="Your business name" />
+      </div>
+      <div class="f-group">
+        <label class="f-label">Service</label>
+        <select class="f-select" id="o-service">
+          <option value="">Choose a service...</option>
+          <option value="Brand Kit|149">Brand Kit — $149</option>
+          <option value="Logo Design|79">Logo Design — $79</option>
+          <option value="Social Media Pack|99">Social Media Pack — $99/mo</option>
+          <option value="Starter Design|49">Starter Design — $49</option>
+        </select>
+      </div>
+
+      <div class="f-group">
+        <label class="f-label">Pick Your Colors</label>
+        <div class="color-chips">
+          <div class="color-chip" style="background:#c84b2f" onclick="toggleColor(this,'Red/Orange')" title="Red"></div>
+          <div class="color-chip" style="background:#2563eb" onclick="toggleColor(this,'Blue')" title="Blue"></div>
+          <div class="color-chip" style="background:#16a34a" onclick="toggleColor(this,'Green')" title="Green"></div>
+          <div class="color-chip" style="background:#d4a017" onclick="toggleColor(this,'Gold')" title="Gold"></div>
+          <div class="color-chip" style="background:#7c3aed" onclick="toggleColor(this,'Purple')" title="Purple"></div>
+          <div class="color-chip" style="background:#0f172a" onclick="toggleColor(this,'Black/Dark')" title="Black"></div>
+          <div class="color-chip" style="background:#f5f0e6;border:1px solid #ddd" onclick="toggleColor(this,'Cream/Neutral')" title="Neutral"></div>
+          <div class="color-chip" style="background:#ec4899" onclick="toggleColor(this,'Pink')" title="Pink"></div>
+        </div>
+      </div>
+
+      <div class="f-group">
+        <label class="f-label">Style Vibe</label>
+        <div class="style-chips">
+          <span class="style-chip" onclick="toggleStyle(this)">Modern & Clean</span>
+          <span class="style-chip" onclick="toggleStyle(this)">Bold & Strong</span>
+          <span class="style-chip" onclick="toggleStyle(this)">Elegant & Luxury</span>
+          <span class="style-chip" onclick="toggleStyle(this)">Fun & Playful</span>
+          <span class="style-chip" onclick="toggleStyle(this)">Professional</span>
+          <span class="style-chip" onclick="toggleStyle(this)">Minimal</span>
+          <span class="style-chip" onclick="toggleStyle(this)">Vintage/Retro</span>
+          <span class="style-chip" onclick="toggleStyle(this)">Tech/Digital</span>
+        </div>
+      </div>
+
+      <div class="f-group">
+        <label class="f-label">Describe What You Need</label>
+        <textarea class="f-textarea" id="o-desc" rows="4" placeholder="Tell me about your business, what you sell, who your customers are, and anything specific you want in the design..."></textarea>
+      </div>
+
+      <div class="order-summary" id="order-summary" style="display:none">
+        <div class="summary-row"><span class="summary-label">Service</span><span class="summary-val" id="sum-service">—</span></div>
+        <div class="summary-row"><span class="summary-label">Delivery</span><span class="summary-val">48 hours</span></div>
+        <div class="summary-row"><span class="summary-label">Revisions</span><span class="summary-val">Unlimited</span></div>
+        <div class="summary-row"><span class="summary-label summary-total">Total</span><span class="summary-val summary-total" id="sum-price">—</span></div>
+      </div>
+
+      <div id="pay-section">
+        <div class="paypal-note">You'll be sent a PayPal payment link after submitting. <strong>You don't pay until you approve the designs.</strong></div>
+        <button class="submit-btn" onclick="submitOrder()" id="order-btn">
+          <span class="spin" id="order-spin"></span>
+          Submit Order →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SCREEN: CONFIRMATION ══════ -->
+<div class="screen" id="scr-confirm">
+  <nav><div class="logo">Pixel <em>&</em> Co.</div></nav>
+  <div class="confirm-wrap">
+    <div class="confirm-icon">✓</div>
+    <div class="confirm-title">Order Received!</div>
+    <div class="confirm-sub">Your designs will be ready within 48 hours. Check your email for updates.</div>
+
+    <div class="confirm-box">
+      <div class="confirm-row"><span class="confirm-key">Service</span><span class="confirm-val" id="conf-service">—</span></div>
+      <div class="confirm-row"><span class="confirm-key">Name</span><span class="confirm-val" id="conf-name">—</span></div>
+      <div class="confirm-row"><span class="confirm-key">Email</span><span class="confirm-val" id="conf-email">—</span></div>
+      <div class="confirm-row"><span class="confirm-key">Price</span><span class="confirm-val" id="conf-price">—</span></div>
+    </div>
+
+    <div class="next-steps">
+      <div class="next-title">What Happens Next</div>
+      <div class="next-item">
+        <div class="next-num">1</div>
+        <div class="next-text"><strong>Check your email</strong> — you'll get a confirmation with your order details shortly.</div>
+      </div>
+      <div class="next-item">
+        <div class="next-num">2</div>
+        <div class="next-text"><strong>Designs delivered in 48 hours</strong> — we'll email your first concepts for review.</div>
+      </div>
+      <div class="next-item">
+        <div class="next-num">3</div>
+        <div class="next-text"><strong>Request changes</strong> — unlimited revisions until you love it.</div>
+      </div>
+      <div class="next-item">
+        <div class="next-num">4</div>
+        <div class="next-text"><strong>Pay only when you approve</strong> — we'll send a PayPal link for the final payment.</div>
+      </div>
+    </div>
+
+    <button class="back-home" onclick="goScreen('home')">Back to Home</button>
+  </div>
+</div>
+
+<!-- ══════ SCREEN: OWNER PANEL ══════ -->
+<div class="screen" id="scr-owner">
+  <nav><div class="logo">Pixel <em>&</em> Co.</div><div style="font-size:0.72rem;color:var(--accent);font-weight:600">OWNER</div></nav>
+  <div id="owner-login-wrap">
+    <div class="owner-login">
+      <div class="owner-card">
+        <div style="font-family:'Fraunces',serif;font-size:1.3rem;font-weight:900;margin-bottom:6px">Owner Login</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:24px">See your orders and client briefs</div>
+        <div class="f-group">
+          <label class="f-label">Password</label>
+          <input class="f-input" id="owner-pw" type="password" placeholder="Enter your password" onkeydown="if(event.key==='Enter')ownerLogin()" />
+        </div>
+        <button class="submit-btn" onclick="ownerLogin()">View My Orders</button>
+        <div style="font-size:0.68rem;color:var(--muted);margin-top:12px;text-align:center">Default password: <strong>pixel2026</strong> — change this in the code</div>
+      </div>
+    </div>
+  </div>
+  <div id="owner-dashboard" style="display:none">
+    <div class="owner-wrap">
+      <div class="owner-title">Your Orders</div>
+      <div class="owner-sub">All client briefs and orders in one place</div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Total Orders</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-revenue">$0</div><div class="stat-label">Total Revenue</div></div>
+      </div>
+      <div id="orders-list"></div>
+      <button class="submit-btn" style="margin-top:16px;background:var(--black)" onclick="exportOrders()">Export All Orders</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="bnav-item active" id="bnav-home" onclick="goScreen('home')">
+    <span class="bnav-icon">🏠</span>Home
+  </button>
+  <button class="bnav-item" id="bnav-services" onclick="goScreen('services')">
+    <span class="bnav-icon">✦</span>Services
+  </button>
+  <button class="bnav-item" id="bnav-order" onclick="goScreen('order')">
+    <span class="bnav-icon">📋</span>Order
+  </button>
+  <button class="bnav-item" id="bnav-owner" onclick="goScreen('owner')">
+    <span class="bnav-icon">🔑</span>Owner
+  </button>
+</div>
+
+<script>
+// ── STATE ──
+let selectedService = null;
+let selectedColors = [];
+let selectedStyles = [];
+const OWNER_PW = 'pixel2026';
+
+// ── NAVIGATION ──
+function goScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('scr-' + name).classList.add('active');
+  document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
+  const nb = document.getElementById('bnav-' + name);
+  if (nb) nb.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── SERVICES ──
+function selectService(idx, name, price) {
+  document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('svc-' + idx).classList.add('selected');
+  selectedService = { name, price };
+}
+
+function proceedToOrder() {
+  if (!selectedService) { showToast('Please select a service first'); return; }
+  goScreen('order');
+  const sel = document.getElementById('o-service');
+  for (let o of sel.options) {
+    if (o.value.startsWith(selectedService.name)) { sel.value = o.value; break; }
+  }
+  updateSummary();
+}
+
+function quickOrder(name, price) {
+  goScreen('order');
+  const sel = document.getElementById('o-service');
+  for (let o of sel.options) {
+    if (o.value.startsWith(name)) { sel.value = o.value; break; }
+  }
+  updateSummary();
+}
+
+// ── ORDER FORM ──
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('o-service').addEventListener('change', updateSummary);
+});
+
+function updateSummary() {
+  const val = document.getElementById('o-service').value;
+  if (!val) { document.getElementById('order-summary').style.display = 'none'; return; }
+  const parts = val.split('|');
+  document.getElementById('sum-service').textContent = parts[0];
+  document.getElementById('sum-price').textContent = '$' + parts[1];
+  document.getElementById('order-summary').style.display = 'block';
+}
+
+function toggleColor(el, name) {
+  el.classList.toggle('on');
+  if (el.classList.contains('on')) selectedColors.push(name);
+  else selectedColors = selectedColors.filter(c => c !== name);
+}
+
+function toggleStyle(el) {
+  el.classList.toggle('on');
+  const s = el.textContent;
+  if (el.classList.contains('on')) selectedStyles.push(s);
+  else selectedStyles = selectedStyles.filter(x => x !== s);
+}
+
+function submitOrder() {
+  const name = document.getElementById('o-name').value.trim();
+  const email = document.getElementById('o-email').value.trim();
+  const biz = document.getElementById('o-biz').value.trim();
+  const service = document.getElementById('o-service').value;
+  const desc = document.getElementById('o-desc').value.trim();
+
+  if (!name || !email || !service) {
+    showToast('Please fill in name, email and service');
+    return;
+  }
+
+  const btn = document.getElementById('order-btn');
+  btn.disabled = true;
+  document.getElementById('order-spin').style.display = 'inline-block';
+
+  const parts = service.split('|');
+  const order = {
+    id: 'ORD-' + Date.now(),
+    name, email, biz,
+    service: parts[0],
+    price: parts[1],
+    colors: selectedColors.join(', ') || 'Not specified',
+    styles: selectedStyles.join(', ') || 'Not specified',
+    desc: desc || 'No description',
+    date: new Date().toLocaleString(),
+    status: 'new'
+  };
+
+  // Save order
+  const orders = JSON.parse(localStorage.getItem('pc_orders') || '[]');
+  orders.push(order);
+  localStorage.setItem('pc_orders', JSON.stringify(orders));
+
+  setTimeout(() => {
+    // Show confirmation
+    document.getElementById('conf-service').textContent = order.service;
+    document.getElementById('conf-name').textContent = order.name;
+    document.getElementById('conf-email').textContent = order.email;
+    document.getElementById('conf-price').textContent = '$' + order.price;
+    goScreen('confirm');
+    btn.disabled = false;
+    document.getElementById('order-spin').style.display = 'none';
+    // Reset form
+    selectedColors = [];
+    selectedStyles = [];
+  }, 1000);
+}
+
+// ── OWNER PANEL ──
+function ownerLogin() {
+  const pw = document.getElementById('owner-pw').value;
+  if (pw !== OWNER_PW) { showToast('Wrong password'); return; }
+  document.getElementById('owner-login-wrap').style.display = 'none';
+  document.getElementById('owner-dashboard').style.display = 'block';
+  renderOrders();
+}
+
+function renderOrders() {
+  const orders = JSON.parse(localStorage.getItem('pc_orders') || '[]');
+  const list = document.getElementById('orders-list');
+  const total = orders.reduce((a, o) => a + parseInt(o.price || 0), 0);
+
+  document.getElementById('stat-total').textContent = orders.length;
+  document.getElementById('stat-revenue').textContent = '$' + total;
+
+  if (!orders.length) {
+    list.innerHTML = '<div class="empty-orders">No orders yet. Share your site to get your first client! 🚀</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  orders.slice().reverse().forEach(o => {
+    const div = document.createElement('div');
+    div.className = 'order-item';
+    div.innerHTML = `
+      <div class="order-item-top">
+        <div class="order-item-name">${o.name} — ${o.biz || 'No biz name'}</div>
+        <div class="order-item-price">$${o.price}</div>
+      </div>
+      <div class="order-item-detail">
+        <strong>Service:</strong> ${o.service}<br>
+        <strong>Email:</strong> ${o.email}<br>
+        <strong>Colors:</strong> ${o.colors}<br>
+        <strong>Style:</strong> ${o.styles}<br>
+        <strong>Brief:</strong> ${o.desc}
+      </div>
+      <div class="order-item-date">${o.date} · Order #${o.id}</div>
+      <div>
+        <span class="order-status status-new">New Order</span>
+        <button onclick="sendPayPal('${o.email}','${o.price}','${o.service}')" style="margin-left:10px;background:var(--accent2);color:#fff;border:none;padding:5px 12px;font-size:0.68rem;font-weight:600;border-radius:2px;cursor:pointer;letter-spacing:0.05em;text-transform:uppercase">Send PayPal Link</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function sendPayPal(email, price, service) {
+  // Opens PayPal with pre-filled amount
+  const paypalUrl = `https://www.paypal.com/paypalme/YOUR_PAYPAL_USERNAME/${price}USD`;
+  window.open(paypalUrl, '_blank');
+  showToast('Opening PayPal — send link to ' + email);
+}
+
+function exportOrders() {
+  const orders = JSON.parse(localStorage.getItem('pc_orders') || '[]');
+  if (!orders.length) { showToast('No orders to export yet'); return; }
+  const text = orders.map(o =>
+    `ORDER: ${o.id}\nDate: ${o.date}\nName: ${o.name}\nEmail: ${o.email}\nBusiness: ${o.biz}\nService: ${o.service}\nPrice: $${o.price}\nColors: ${o.colors}\nStyle: ${o.styles}\nBrief: ${o.desc}\n---`
+  ).join('\n\n');
+  const blob = new Blob([text], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'pixel-co-orders.txt';
+  a.click();
+  showToast('Orders exported!');
+}
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
